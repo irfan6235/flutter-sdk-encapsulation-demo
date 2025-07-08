@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jodetx_payment_sdk/jodetx_payment_sdk.dart';
+import 'package:flutter/services.dart';
 import '../models/product.dart';
 
 class CartPage extends StatelessWidget {
@@ -8,23 +8,15 @@ class CartPage extends StatelessWidget {
 
   double get totalAmount => cartItems.fold(0, (sum, item) => sum + item.price);
 
-  void _startPayment(BuildContext context) {
-    final order = {
-      'orderId': 'ORD${DateTime.now().millisecondsSinceEpoch}',
-      'amount': totalAmount
-    };
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => JodeTxSDK.startPayment(order, (result) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Payment Status: $result")),
-          );
-          Navigator.popUntil(context, (route) => route.isFirst);
-        }),
-      ),
-    );
+  void _startPayment() async {
+    const channel = MethodChannel('com.jodetx.payment/launch');
+    try {
+      print("🟡 Requesting launchPayment from native...");
+      final result = await channel.invokeMethod('launchPayment');
+      print("✅ Native response: $result");
+    } catch (e) {
+      print("❌ Error calling launchPayment: $e");
+    }
   }
 
   @override
@@ -54,7 +46,7 @@ class CartPage extends StatelessWidget {
                     style: const TextStyle(fontSize: 18)),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () => _startPayment(context),
+                  onPressed: _startPayment,
                   child: const Text("Proceed to Pay"),
                 )
               ],

@@ -3,7 +3,7 @@ pluginManagement {
         def properties = new Properties()
         file("local.properties").withInputStream { properties.load(it) }
         def flutterSdkPath = properties.getProperty("flutter.sdk")
-        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        assert flutterSdkPath != null : "flutter.sdk not set in local.properties"
         return flutterSdkPath
     }
     settings.ext.flutterSdkPath = flutterSdkPath()
@@ -26,4 +26,9 @@ plugins {
     id "com.android.application" version "7.3.0" apply false
 }
 
+// ✅ Your main host app module
 include ":app"
+
+// ✅ Your precompiled Flutter SDK module (AAR)
+include ":jodetx_payment_sdk"
+project(":jodetx_payment_sdk").projectDir = new File("../jodetx_payment_sdk/build/host/intermediates/flutter")
