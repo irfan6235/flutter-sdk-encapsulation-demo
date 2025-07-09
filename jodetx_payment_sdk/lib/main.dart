@@ -3,48 +3,46 @@ import 'package:flutter/services.dart';
 
 const channel = MethodChannel('com.jodetx.payment/launch');
 
-@pragma(
-    'vm:entry-point') // 🔑 Required for Dart VM to find this function in AOT
+// 🔴 AAR requires main()
+@pragma('vm:entry-point')
 void main() {
-  startPayment(); // 🔄 You may call your real logic here
+  startPayment(); // ✅ Route to correct entrypoint
 }
 
+@pragma('vm:entry-point')
 void startPayment() {
   WidgetsFlutterBinding.ensureInitialized();
+  debugPrint("🟢 Dart: startPayment launched");
 
-  // Handle method calls from native Android
   channel.setMethodCallHandler((call) async {
     if (call.method == 'launchPayment') {
-      debugPrint('✅ Dart: launchPayment received from native.');
+      debugPrint("✅ Dart: launchPayment received");
       return "Payment UI Started";
     }
     throw MissingPluginException('Unknown method: ${call.method}');
   });
 
-  debugPrint('🟢 Dart isolate started');
-  channel.invokeMethod('dartReady');
-
-  runApp(const PaymentApp());
+  // 🛠 Fix for view not rendering
+  Future.microtask(() {
+    runApp(const PaymentApp());
+  });
 }
 
 class PaymentApp extends StatelessWidget {
   const PaymentApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: Center(
+        appBar: AppBar(title: const Text("Jodetx Payment")),
+        body: const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Icon(Icons.payment, size: 80, color: Colors.green),
               SizedBox(height: 20),
-              Text(
-                "Welcome to Jodetx Payment SDK",
-                style: TextStyle(fontSize: 18),
-              ),
+              Text("Welcome to Jodetx Payment SDK"),
             ],
           ),
         ),
