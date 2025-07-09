@@ -26,9 +26,8 @@ plugins {
     id "com.android.application" version "7.3.0" apply false
 }
 
-// ✅ Your main host app module
-include ":app"
+// ✅ Your main Flutter host app
+include ':app'
 
-// ✅ Your precompiled Flutter SDK module (AAR)
-include ":jodetx_payment_sdk"
-project(":jodetx_payment_sdk").projectDir = new File("../jodetx_payment_sdk/build/host/intermediates/flutter")
+// include ':jodetx_payment_sdk'
+// project(':jodetx_payment_sdk').projectDir = new File('app/libs')

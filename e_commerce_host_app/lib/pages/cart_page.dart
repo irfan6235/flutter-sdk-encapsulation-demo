@@ -8,11 +8,12 @@ class CartPage extends StatelessWidget {
 
   double get totalAmount => cartItems.fold(0, (sum, item) => sum + item.price);
 
+  static const nativeChannel = MethodChannel('com.jodetx.payment/native');
+
   void _startPayment() async {
-    const channel = MethodChannel('com.jodetx.payment/launch');
     try {
       print("🟡 Requesting launchPayment from native...");
-      final result = await channel.invokeMethod('launchPayment');
+      final result = await nativeChannel.invokeMethod('launchPayment');
       print("✅ Native response: $result");
     } catch (e) {
       print("❌ Error calling launchPayment: $e");

@@ -4,7 +4,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="${applicationName}"
         android:label="e_commerce_host_app"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
@@ -24,7 +23,14 @@
             </intent-filter>
         </activity>
 
-        <!-- ✅ Add this to support launching FlutterActivity via intent -->
+        <activity
+            android:name=".PaymentActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name="io.flutter.embedding.android.FlutterActivity"
             android:exported="false" />

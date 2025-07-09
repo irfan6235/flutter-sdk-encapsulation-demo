@@ -28,12 +28,13 @@ android {
     }
 
     buildTypes {
-        debug {}
-        profile { initWith debug }
-        release {
-            signingConfig signingConfigs.debug
-        }
+    debug {}
+    profile { initWith debug }
+    release {
+        signingConfig signingConfigs.debug
     }
+}
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -47,28 +48,44 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
+    // ✅ Add this block to load AAR from local folder
+    packagingOptions {
+        exclude 'lib/**/libapp.so' // 👈 Prevent conflict
+        exclude 'io/flutter/plugins/GeneratedPluginRegistrant.class'
+    }
 }
 
+// ✅ Needed for Flutter toolchain
 flutter {
     source '../..'
 }
 
-// ✅ Local and Flutter repositories
 repositories {
+    // flatDir {
+    //     dirs 'libs'
+    // }
     maven {
         url 'C:/flutter_to_flutter_demo/jodetx_payment_sdk/build/host/outputs/repo'
     }
+    google()
+    mavenCentral()
     maven {
         url "https://storage.googleapis.com/download.flutter.io"
     }
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.multidex:multidex:2.0.1"
-
-    // ✅ Use precompiled Flutter SDK variants
+    // debugImplementation(name: 'flutter_debug-1.0', ext: 'aar')
+    // profileImplementation(name: 'flutter_profile-1.0', ext: 'aar')
+    // releaseImplementation(name: 'flutter_release-1.0', ext: 'aar')
     debugImplementation 'com.example.jodetx_payment_sdk:flutter_debug:1.0'
     profileImplementation 'com.example.jodetx_payment_sdk:flutter_profile:1.0'
     releaseImplementation 'com.example.jodetx_payment_sdk:flutter_release:1.0'
+
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.annotation:annotation:1.2.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
+    implementation "androidx.multidex:multidex:2.0.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
